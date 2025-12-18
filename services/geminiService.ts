@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 // Use the key defined in constants.ts
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const modelId = "gemini-2.0-flash"; // Updated to recommended model for text/extraction tasks
+const modelId = "gemini-2.5-flash"; // Updated to recommended model for text/extraction tasks
 
 export const extractDataFromDocument = async (file: File) => {
   try {
