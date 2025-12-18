@@ -1,86 +1,97 @@
 import JSZip from 'jszip';
 import { TaxData } from '../types';
 
-const generateId = () => Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-const formatDate = (date: Date) => date.toISOString().split('T')[0];
+const generateId = () => Math.floor(Math.random() * 1000000000000).toString();
 
-export const generateVaudtaxFile = async (data: TaxData, filename: string = "declaration_2024") => {
+export const generateVaudtaxFile = async (data: TaxData, filename: string = "declaration_2025") => {
   const zip = new JSZip();
 
-  const accountsXml = data.comptes.map(compte => `
-        <compte>
-          <banque>${escapeXml(compte.banque)}</banque>
-          <iban>${escapeXml(compte.iban)}</iban>
-          <titulaire>${escapeXml(compte.titulaire)}</titulaire>
-          <typeCompte>${escapeXml(compte.typeCompte)}</typeCompte>
-          <solde>${compte.solde}</solde>
-          <interets>${compte.interets}</interets>
-        </compte>`).join('');
+  // Année fiscale (déduite ou défaut 2024)
+  const fiscalYear = data.identification.periodeDebut.split('-')[0] || "2024";
 
-  const salariesXml = data.salaires.map(sal => `
-    <revenuActiviteLucrative>
-      <employeur>${escapeXml(sal.employeur)}</employeur>
-      <salaireBrut>${sal.salaireBrut}</salaireBrut>
-      <salaireNet>${sal.salaireNet}</salaireNet>
-      <deductionsAVS>${sal.cotisationsAVS}</deductionsAVS>
-      <deductionsLPP>${sal.cotisationsLPP}</deductionsLPP>
-      <fraisProfessionnels>${sal.fraisProfessionnels}</fraisProfessionnels>
-    </revenuActiviteLucrative>
-  `).join('');
+  // Génération des comptes bancaires (etatTitres)
+  const etatTitresXml = data.comptes.map((compte, index) => `
+        <etatTitres>
+            <id>etatTitres${index + 1}</id>
+            <typeDeclarationTitres>RELEVE_FISCAL_BANCAIRE</typeDeclarationTitres>
+            <isGenerated>true</isGenerated>
+            <iban>${escapeXml(compte.iban)}</iban>
+            <etablissement>${escapeXml(compte.banque)}</etablissement>
+            <soldeCompteCHF>${compte.solde.toFixed(2)}</soldeCompteCHF>
+            <interetsBrutsCHF>${compte.interets.toFixed(2)}</interetsBrutsCHF>
+            <periodeDebut>01.01.${fiscalYear}</periodeDebut>
+            <periodeFin>31.12.${fiscalYear}</periodeFin>
+            <anneeFiscaleReleve>${fiscalYear}</anneeFiscaleReleve>
+            <soldeTitreCHF>0.00</soldeTitreCHF>
+            <dividendeBrutCHF>0.00</dividendeBrutCHF>
+            <impRetenueCHF>0.00</impRetenueCHF>
+            <rendementImmobilierBrutCHF>0.00</rendementImmobilierBrutCHF>
+            <rendementImmobilierEtrangerBrutCHF>0.00</rendementImmobilierEtrangerBrutCHF>
+            <autresProduitsCHF>0.00</autresProduitsCHF>
+            <totalProduitsBrutsCHF>0.00</totalProduitsBrutsCHF>
+            <impRetenueEtrangereCHF>0.00</impRetenueEtrangereCHF>
+            <documentType>
+                <type>RELEVE_FISCAL_BANCAIRE</type>
+                <name>Relevé ${escapeXml(compte.banque)} ${fiscalYear}</name>
+            </documentType>
+        </etatTitres>`).join('');
 
-  const totalFortune = data.comptes.reduce((sum, c) => sum + (c.solde || 0), 0);
-  const totalInterets = data.comptes.reduce((sum, c) => sum + (c.interets || 0), 0);
+  // Structure complète selon le modèle fourni
+  const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<vaudTaxData xmlns="http://www.vd.ch/fiscalite/vaudtax">
+    <fiscalPeriod>${fiscalYear}</fiscalPeriod>
+    <lastGesdemReference>GEN-${generateId()}</lastGesdemReference>
+    <identification>
+        <isInitialized>true</isInitialized>
+        <maritalStatus>${data.personne.etatCivil || 'CELIBATAIRE'}</maritalStatus>
+        <isAloneWithChildren>false</isAloneWithChildren>
+        <address>
+            <houseNumber>0</houseNumber>
+            <street>
+                <longName>${escapeXml(data.personne.adresse.rue || 'Rue (A modifier)')}</longName>
+                <estrid>0</estrid>
+            </street>
+            <locality>
+                <zipCode>${escapeXml(data.personne.adresse.npa || '0000')}</zipCode>
+                <longName>${escapeXml(data.personne.adresse.localite || 'Ville (A modifier)')}</longName>
+                <postalLocalityHistoryId>0</postalLocalityHistoryId>
+                <zipCodeId>0</zipCodeId>
+            </locality>
+            <country>
+                <iso2Id>CH</iso2Id>
+                <shortNameFr>Suisse</shortNameFr>
+            </country>
+        </address>
+        <communeFiscale>
+            <nomOfficiel>${escapeXml(data.personne.adresse.localite || 'Commune (A modifier)')}</nomOfficiel>
+            <numeroOfs>0</numeroOfs>
+            <sigleCanton>VD</sigleCanton>
+            <estUneCommuneFaitiere>false</estUneCommuneFaitiere>
+        </communeFiscale>
+    </identification>
+    <fiscalDeclarationType>
+        <isMain>true</isMain>
+        <isRectification>false</isRectification>
+    </fiscalDeclarationType>
+    <declarationForm>
+        <version>${Number(fiscalYear) - 1}</version>
+        <subForm>FORMULAIRE_PRINCIPAL</subForm>
+    </declarationForm>
+    <menuPrefs>
+        <menuPrefs>
+            <menuId>ETAT_DES_TITRES_RELEVERELEVE_FISCAL_BANCAIRE</menuId>
+            <isOpen>true</isOpen>
+        </menuPrefs>
+    </menuPrefs>
+    <etatTitres>
+        ${etatTitresXml}
+    </etatTitres>
+    <!-- Note: Les certificats de salaire ne sont pas explicitement dans l'exemple XML fourni, 
+         mais généralement stockés ailleurs ou dans des sous-formulaires spécifiques non visibles ici. 
+         Ce fichier se concentre sur la structure fournie (Etat des titres). -->
+</vaudTaxData>`;
 
-  const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CTB xmlns="http://www.tax-easy.ch/tax/xml/vd">
-  <version>
-    <produit>VaudTax</produit>
-    <annee>${data.identification.periodeDebut.split('-')[0]}</annee>
-    <versionLogiciel>2024.1.0</versionLogiciel>
-  </version>
-  
-  <identification>
-    <numeroContribuable>000000</numeroContribuable> 
-    <periodeDebut>${data.identification.periodeDebut}</periodeDebut>
-    <periodeFin>${data.identification.periodeFin}</periodeFin>
-    <isInitialized>true</isInitialized>
-  </identification>
-  
-  <donneesPersonnelles>
-    <nom>${escapeXml(data.personne.nom)}</nom>
-    <prenom>${escapeXml(data.personne.prenom)}</prenom>
-    <dateNaissance>${data.personne.dateNaissance}</dateNaissance>
-    <etatCivil>${data.personne.etatCivil}</etatCivil>
-    <adresse>
-      <rue>${escapeXml(data.personne.adresse.rue)}</rue>
-      <npa>${escapeXml(data.personne.adresse.npa)}</npa>
-      <localite>${escapeXml(data.personne.adresse.localite)}</localite>
-    </adresse>
-  </donneesPersonnelles>
-  
-  <revenus>
-    ${salariesXml}
-  </revenus>
-  
-  <fortune>
-    <fortuneMobiliere>
-      <comptesBancaires>
-        ${accountsXml}
-      </comptesBancaires>
-      <totalFortuneMobiliere>${totalFortune}</totalFortuneMobiliere>
-      <totalInterets>${totalInterets}</totalInterets>
-    </fortuneMobiliere>
-  </fortune>
-  
-  <deductions>
-      <fraisTransport>${data.questions.fraisTransport}</fraisTransport>
-      <repasExterieur>${data.questions.repasExterieur}</repasExterieur>
-      <pilier3a>${data.questions.pilier3a}</pilier3a>
-      <dons>${data.questions.dons}</dons>
-  </deductions>
-</CTB>`;
-
-  const xmlFilename = `CTB_PF2024_${generateId()}_${formatDate(new Date())}.xml`;
+  const xmlFilename = `vaudtax_data_${fiscalYear}.xml`;
   zip.file(xmlFilename, xmlContent);
 
   const blob = await zip.generateAsync({ type: 'blob' });

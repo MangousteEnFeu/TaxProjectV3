@@ -18,8 +18,8 @@ export const KNOWN_BANKS = [
 
 export const DEFAULT_TAX_DATA = {
   identification: {
-    periodeDebut: "2024-01-01",
-    periodeFin: "2024-12-31",
+    periodeDebut: "2025-01-01",
+    periodeFin: "2025-12-31",
   },
   personne: {
     nom: "",

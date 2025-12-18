@@ -1,57 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FileText, ShieldCheck, Zap, ArrowRight, Landmark, Globe } from 'lucide-react';
+import { FileText, ShieldCheck, Zap, ArrowRight, Landmark } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Language } from '../constants/translations';
+import { Navbar } from '../components/Navbar';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <header className="container mx-auto px-6 py-6 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="bg-[#00904E] p-2 rounded-lg">
-            <Landmark className="text-white w-6 h-6" />
-          </div>
-          <span className="text-2xl font-bold text-[#1E293B] brand-font">VaudTax</span>
-        </div>
-        
-        <div className="flex items-center space-x-6">
-          {/* Language Selector */}
-          <div className="relative group flex items-center">
-              <Globe className="w-4 h-4 text-gray-400 mr-2" />
-              <select 
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-transparent text-sm font-medium text-[#64748B] focus:outline-none cursor-pointer hover:text-[#00904E]"
-              >
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="it">Italiano</option>
-                <option value="rm">Rumantsch</option>
-                <option value="en">English</option>
-                <option value="pt">Português</option>
-                <option value="hr">B/H/S</option>
-                <option value="sq">Shqip</option>
-              </select>
-          </div>
-
-          <div className="space-x-4 flex items-center hidden md:flex">
-            <Link to="/login" className="text-[#64748B] hover:text-[#00904E] font-medium transition-colors">{t('nav.login')}</Link>
-            <Link to="/register" className="bg-[#00904E] text-white px-5 py-2 rounded-lg font-bold hover:bg-[#00703C] shadow-lg hover:shadow-xl transition-all inline-block border-b-4 border-[#006030]">
-              {t('nav.start')}
-            </Link>
-          </div>
-          
-          {/* Mobile Login Button (Simplified) */}
-           <div className="md:hidden">
-            <Link to="/login" className="text-[#00904E] font-bold">{t('nav.login')}</Link>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero */}
       <main className="flex-grow flex flex-col">
@@ -95,7 +54,7 @@ const Landing: React.FC = () => {
                         <div className="h-2 bg-gray-100 rounded w-16"></div>
                       </div>
                     </div>
-                    <div className="text-[#00904E] font-bold">2024</div>
+                    <div className="text-[#00904E] font-bold">VaudTax</div>
                  </div>
                  <div className="space-y-3">
                     <div className="h-12 bg-[#F8FAFC] rounded border border-gray-100 w-full flex items-center px-4">

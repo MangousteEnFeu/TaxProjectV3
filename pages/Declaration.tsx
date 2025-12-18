@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { FileUpload } from '../components/FileUpload';
 import { UploadedFile, TaxData } from '../types';
 import { DEFAULT_TAX_DATA } from '../constants';
 import { extractDataFromDocument } from '../services/geminiService';
 import { generateVaudtaxFile } from '../services/vaudtaxGenerator';
-import { Loader2, CheckCircle, FileText, ChevronRight, Save, Download } from 'lucide-react';
+import { saveDeclaration, getDeclarationById } from '../services/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Loader2, CheckCircle, ChevronRight, Download, Save, User, Wallet, Calculator, Landmark } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Declaration: React.FC = () => {
@@ -13,9 +16,43 @@ const Declaration: React.FC = () => {
   const [taxData, setTaxData] = useState<TaxData>(DEFAULT_TAX_DATA);
   const [step, setStep] = useState<1 | 2 | 3>(1); // 1: Upload, 2: Questions, 3: Success
   const [processing, setProcessing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  // --- Handlers ---
+  // Load existing declaration if ID present
+  useEffect(() => {
+    if (id) {
+        const loadDecl = async () => {
+            const { data } = await getDeclarationById(id);
+            if (data && data.data) {
+                setTaxData(data.data);
+                // If data already exists, maybe go to step 2 directly? Let's stay on 1 so they can add files.
+            }
+        };
+        loadDecl();
+    }
+  }, [id]);
+
+  const handleSave = async () => {
+      if (!user) return;
+      setSaving(true);
+      try {
+        const { data } = await saveDeclaration(user.id, taxData, undefined, id);
+        if (data && !id) {
+            // Update URL with new ID without reloading
+            navigate(`/declaration/${data.id}`, { replace: true });
+        }
+        alert("Sauvegardé avec succès !");
+      } catch (e) {
+          console.error(e);
+          alert("Erreur lors de la sauvegarde.");
+      } finally {
+          setSaving(false);
+      }
+  };
 
   const handleFilesSelected = async (newFiles: File[]) => {
     const newUploadedFiles: UploadedFile[] = newFiles.map(f => ({
@@ -33,14 +70,11 @@ const Declaration: React.FC = () => {
     setProcessing(true);
     
     for (const fileObj of filesToProcess) {
-      // Update status to processing
       setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: 'processing' } : f));
 
       try {
         const extracted = await extractDataFromDocument(fileObj.file);
-        console.log("Extracted Data:", extracted);
-
-        // Update Tax Data based on extraction
+        
         setTaxData(prev => {
           const newData = { ...prev };
           
@@ -69,11 +103,14 @@ const Declaration: React.FC = () => {
               autresDeductions: extracted.salary.autresDeductions || 0
             }];
           }
+          
+          // Update Person Info if empty (assuming extraction might have it in future updates of geminiService)
+          // For now, let's pretend gemini *could* extract it, but since we didn't change geminiService, 
+          // we rely on manual input, but I will display the sections in the preview.
 
           return newData;
         });
 
-        // Update file status to success
         setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: 'success' } : f));
 
       } catch (e) {
@@ -98,8 +135,6 @@ const Declaration: React.FC = () => {
     }
   };
 
-  // --- Render Steps ---
-
   const renderUploadStep = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div>
@@ -108,53 +143,102 @@ const Declaration: React.FC = () => {
       </div>
       
       <div>
-        <h2 className="text-xl font-bold text-[#1E293B] mb-4 brand-font">{t('declaration.extracted_title')}</h2>
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-6 h-fit shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-[#1E293B] brand-font">{t('declaration.extracted_title')}</h2>
+            <button onClick={handleSave} disabled={saving} className="text-[#00904E] text-sm font-bold flex items-center hover:underline">
+                {saving ? <Loader2 className="w-3 h-3 animate-spin mr-1"/> : <Save className="w-4 h-4 mr-1" />}
+                Sauvegarder
+            </button>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-6 h-fit shadow-sm max-h-[600px] overflow-y-auto">
+          
+          {/* Section Identité (même si vide, on l'affiche pour montrer que c'est pris en compte) */}
           <div>
-            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2">{t('declaration.income_title')}</h3>
+            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2 flex items-center">
+                <User className="w-4 h-4 mr-2" /> Données Personnelles
+            </h3>
+            <div className="text-sm text-[#1E293B] border-l-2 border-[#E2E8F0] pl-3 py-1 space-y-1">
+                 {taxData.personne.nom || taxData.personne.prenom ? (
+                     <>
+                        <p><span className="text-[#64748B]">Nom:</span> {taxData.personne.nom} {taxData.personne.prenom}</p>
+                        <p><span className="text-[#64748B]">Né(e) le:</span> {taxData.personne.dateNaissance}</p>
+                     </>
+                 ) : (
+                     <p className="text-[#64748B] italic">En attente de saisie ou d'extraction...</p>
+                 )}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2 flex items-center">
+                <Wallet className="w-4 h-4 mr-2" /> {t('declaration.income_title')}
+            </h3>
             {taxData.salaires.length === 0 ? (
-              <p className="text-[#64748B] italic text-sm">{t('declaration.no_salary')}</p>
+              <p className="text-[#64748B] italic text-sm pl-3">{t('declaration.no_salary')}</p>
             ) : (
               <div className="space-y-2">
                 {taxData.salaires.map((s, i) => (
-                  <div key={i} className="flex justify-between text-sm text-[#1E293B] border-b border-[#E2E8F0] pb-2">
+                  <div key={i} className="flex justify-between text-sm text-[#1E293B] bg-gray-50 p-2 rounded">
                     <span>{s.employeur}</span>
-                    <span className="font-mono font-medium">{s.salaireNet.toFixed(2)} CHF</span>
+                    <span className="font-mono font-medium">{s.salaireNet.toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="flex justify-between font-bold text-[#1E293B] pt-2">
+                <div className="flex justify-between font-bold text-[#1E293B] pt-1 px-2 border-t border-dashed border-gray-300">
                   <span>{t('declaration.total_net')}</span>
-                  <span>{taxData.salaires.reduce((acc, s) => acc + s.salaireNet, 0).toFixed(2)} CHF</span>
+                  <span>{taxData.salaires.reduce((acc, s) => acc + s.salaireNet, 0).toFixed(2)}</span>
                 </div>
               </div>
             )}
           </div>
 
           <div>
-            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2">{t('declaration.wealth_title')}</h3>
+            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2 flex items-center">
+                <Landmark className="w-4 h-4 mr-2" /> {t('declaration.wealth_title')}
+            </h3>
             {taxData.comptes.length === 0 ? (
-              <p className="text-[#64748B] italic text-sm">{t('declaration.no_bank')}</p>
+              <p className="text-[#64748B] italic text-sm pl-3">{t('declaration.no_bank')}</p>
             ) : (
               <div className="space-y-2">
                 {taxData.comptes.map((c, i) => (
-                  <div key={i} className="flex justify-between text-sm text-[#1E293B] border-b border-[#E2E8F0] pb-2">
-                    <span>{c.banque} ({c.iban.slice(-4)})</span>
-                    <span className="font-mono font-medium">{c.solde.toFixed(2)} CHF</span>
+                  <div key={i} className="flex justify-between text-sm text-[#1E293B] bg-gray-50 p-2 rounded">
+                    <span className="truncate max-w-[150px]">{c.banque} ({c.iban.slice(-4)})</span>
+                    <span className="font-mono font-medium">{c.solde.toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="flex justify-between font-bold text-[#1E293B] pt-2">
+                <div className="flex justify-between font-bold text-[#1E293B] pt-1 px-2 border-t border-dashed border-gray-300">
                   <span>{t('declaration.total_wealth')}</span>
-                  <span>{taxData.comptes.reduce((acc, c) => acc + c.solde, 0).toFixed(2)} CHF</span>
+                  <span>{taxData.comptes.reduce((acc, c) => acc + c.solde, 0).toFixed(2)}</span>
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Section Déductions */}
+          <div>
+            <h3 className="text-[#00904E] font-bold text-sm uppercase tracking-wider mb-2 flex items-center">
+                <Calculator className="w-4 h-4 mr-2" /> Déductions & Frais
+            </h3>
+             <div className="text-sm text-[#1E293B] space-y-1 pl-3">
+                 <div className="flex justify-between">
+                     <span className="text-[#64748B]">Transport:</span>
+                     <span>{taxData.questions.fraisTransport || 0}</span>
+                 </div>
+                 <div className="flex justify-between">
+                     <span className="text-[#64748B]">Repas:</span>
+                     <span>{taxData.questions.repasExterieur || 0}</span>
+                 </div>
+                 <div className="flex justify-between">
+                     <span className="text-[#64748B]">3ème Pillier:</span>
+                     <span>{taxData.questions.pilier3a || 0}</span>
+                 </div>
+             </div>
           </div>
 
           <button 
             onClick={() => setStep(2)}
-            disabled={processing || files.length === 0}
-            className={`w-full py-3 rounded-lg font-bold flex justify-center items-center transition-colors shadow-md ${
-              processing || files.length === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#00904E] text-white hover:bg-[#00703C] hover:shadow-lg'
+            className={`w-full py-3 rounded-lg font-bold flex justify-center items-center transition-colors shadow-md mt-4 ${
+              processing ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#00904E] text-white hover:bg-[#00703C] hover:shadow-lg'
             }`}
           >
             {processing ? <Loader2 className="animate-spin w-5 h-5 mr-2" /> : t('declaration.btn_continue')}
@@ -167,7 +251,13 @@ const Declaration: React.FC = () => {
 
   const renderQuestionsStep = () => (
     <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-[#1E293B] mb-6 brand-font">{t('declaration.step2_title')}</h2>
+      <div className="flex justify-between items-center mb-6">
+         <h2 className="text-2xl font-bold text-[#1E293B] brand-font">{t('declaration.step2_title')}</h2>
+         <button onClick={handleSave} disabled={saving} className="text-[#00904E] text-sm font-bold flex items-center hover:underline bg-white px-4 py-2 rounded-lg border border-[#E2E8F0] shadow-sm">
+             {saving ? <Loader2 className="w-3 h-3 animate-spin mr-2"/> : <Save className="w-4 h-4 mr-2" />}
+             Sauvegarder le brouillon
+         </button>
+      </div>
       
       <div className="space-y-8">
         {/* Identité */}
@@ -197,11 +287,28 @@ const Declaration: React.FC = () => {
                <select className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded p-2 text-[#1E293B] focus:border-[#00904E] focus:outline-none"
                  value={taxData.personne.etatCivil} onChange={e => setTaxData({...taxData, personne: {...taxData.personne, etatCivil: e.target.value}})}>
                  <option value="">{t('declaration.civil_select')}</option>
-                 <option value="single">{t('declaration.civil_single')}</option>
-                 <option value="married">{t('declaration.civil_married')}</option>
-                 <option value="divorced">{t('declaration.civil_divorced')}</option>
+                 <option value="CELIBATAIRE">{t('declaration.civil_single')}</option>
+                 <option value="MARIE">{t('declaration.civil_married')}</option>
+                 <option value="DIVORCE">{t('declaration.civil_divorced')}</option>
                </select>
             </div>
+          </div>
+          <div className="mt-4">
+             <label className="block text-sm text-[#64748B] mb-1 font-medium">Adresse (Rue, NPA, Ville)</label>
+             <div className="grid grid-cols-12 gap-2">
+                 <div className="col-span-6">
+                    <input type="text" placeholder="Rue" className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded p-2 text-[#1E293B]" 
+                        value={taxData.personne.adresse.rue} onChange={e => setTaxData({...taxData, personne: {...taxData.personne, adresse: {...taxData.personne.adresse, rue: e.target.value}}})}/>
+                 </div>
+                 <div className="col-span-2">
+                    <input type="text" placeholder="NPA" className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded p-2 text-[#1E293B]"
+                         value={taxData.personne.adresse.npa} onChange={e => setTaxData({...taxData, personne: {...taxData.personne, adresse: {...taxData.personne.adresse, npa: e.target.value}}})}/>
+                 </div>
+                 <div className="col-span-4">
+                    <input type="text" placeholder="Localité" className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded p-2 text-[#1E293B]"
+                         value={taxData.personne.adresse.localite} onChange={e => setTaxData({...taxData, personne: {...taxData.personne, adresse: {...taxData.personne.adresse, localite: e.target.value}}})}/>
+                 </div>
+             </div>
           </div>
         </div>
 
@@ -271,7 +378,7 @@ const Declaration: React.FC = () => {
              </div>
              <h2 className="text-3xl font-bold text-[#1E293B] mb-2 brand-font">{t('declaration.step3_title')}</h2>
              <p className="text-[#64748B] mb-8">{t('declaration.step3_desc')}</p>
-             <button onClick={() => setStep(1)} className="text-[#00904E] font-bold hover:underline">{t('declaration.new_decl_btn')}</button>
+             <button onClick={() => {setStep(1); setTaxData(DEFAULT_TAX_DATA); navigate('/declaration');}} className="text-[#00904E] font-bold hover:underline">{t('declaration.new_decl_btn')}</button>
            </div>
         )}
       </div>

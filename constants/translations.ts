@@ -7,9 +7,60 @@ export const TRANSLATIONS: Record<Language, any> = {
       desc: "Assistant VaudTax"
     },
     nav: {
+      home: "Accueil",
+      pricing: "Tarifs",
+      about: "À propos",
       logout: "Déconnexion",
       login: "Connexion",
       start: "Commencer"
+    },
+    pricing: {
+      title: "Nos Formules",
+      subtitle: "Choisissez l'abonnement qui vous convient. Mensuel ou Annuel.",
+      toggle_monthly: "Mensuel",
+      toggle_annual: "Annuel (-20%)",
+      free_title: "Découverte",
+      free_price: "0 CHF",
+      free_desc: "Pour tester l'extraction.",
+      standard_title: "Standard",
+      standard_price_mo: "9.90 CHF",
+      standard_price_yr: "99.00 CHF",
+      standard_desc: "L'essentiel pour déclarer.",
+      pro_title: "Expert",
+      pro_price_mo: "29.90 CHF",
+      pro_price_yr: "299.00 CHF",
+      pro_desc: "Support complet et revue.",
+      feature_extract: "Extraction IA automatique",
+      feature_export: "Export .vaudtax officiel",
+      feature_support: "Support prioritaire",
+      feature_review: "Vérification fiscale",
+      btn_choose: "Choisir cette formule",
+      per_month: "/ mois",
+      per_year: "/ an"
+    },
+    payment: {
+      title: "Paiement Sécurisé",
+      summary_title: "Récapitulatif de la commande",
+      plan_label: "Formule",
+      billing_label: "Facturation",
+      total_label: "Total à payer",
+      card_details: "Détails de la carte",
+      card_holder: "Titulaire de la carte",
+      pay_btn: "Payer avec Stripe",
+      secure_badge: "Paiement chiffré SSL",
+      success_title: "Paiement Réussi !",
+      success_desc: "Merci pour votre abonnement. Vous pouvez maintenant accéder à votre assistant.",
+      btn_dashboard: "Accéder au Dashboard"
+    },
+    about: {
+      title: "À propos de VaudTax Helper",
+      subtitle: "Simplifier la fiscalité pour le canton de Vaud.",
+      mission_title: "Notre Mission",
+      mission_desc: "Nous utilisons l'intelligence artificielle de pointe pour rendre la déclaration d'impôts accessible, rapide et sans erreur pour tous les habitants du canton.",
+      privacy_title: "Confidentialité",
+      privacy_desc: "Vos données sont traitées localement et sécurisées. Nous ne conservons aucune donnée bancaire sensible après le traitement.",
+      contact_title: "Contact",
+      contact_desc: "Une question ? Écrivez-nous à support@vaudtax-helper.ch"
     },
     landing: {
       hero_badge: "Liberté et Patrie",
@@ -20,7 +71,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       secure: "Sécurisé",
       fast: "Rapide",
       compatible: "Compatible VaudTax",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Bienvenue",
@@ -40,7 +91,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       title: "Vos Déclarations",
       new_btn: "Nouvelle déclaration",
       empty_title: "Historique vide",
-      empty_desc: "Commencez votre première déclaration pour l'année fiscale 2024",
+      empty_desc: "Commencez votre première déclaration pour l'année fiscale en cours",
       start_now: "Commencer maintenant",
       status_finished: "Terminée",
       modified: "Modifiée le"
@@ -71,7 +122,6 @@ export const TRANSLATIONS: Record<Language, any> = {
       btn_back: "Retour",
       btn_generate: "Générer le fichier .vaudtax",
       
-      // Form fields
       section_personal: "Données personnelles",
       section_deductions: "Déductions supplémentaires",
       label_name: "Nom",
@@ -91,7 +141,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   de: {
     brand: { motto: "Freiheit und Vaterland", desc: "VaudTax Assistent" },
-    nav: { logout: "Abmelden", login: "Anmelden", start: "Starten" },
+    nav: { home: "Startseite", pricing: "Preise", about: "Über uns", logout: "Abmelden", login: "Anmelden", start: "Starten" },
+    pricing: {
+      title: "Unsere Preise", subtitle: "Wählen Sie Ihr Abonnement. Monatlich oder Jährlich.",
+      toggle_monthly: "Monatlich", toggle_annual: "Jährlich (-20%)",
+      free_title: "Entdeckung", free_price: "0 CHF", free_desc: "Zum Testen der Extraktion.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Die komplette Erklärung.",
+      pro_title: "Experte", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Mit Expertenprüfung.",
+      feature_extract: "Automatische KI-Extraktion", feature_export: "Offizieller .vaudtax Export",
+      feature_support: "Prioritäts-Support", feature_review: "Steuerprüfung", btn_choose: "Wählen",
+      per_month: "/ monat", per_year: "/ jahr"
+    },
+    payment: {
+      title: "Sichere Zahlung", summary_title: "Bestellübersicht", plan_label: "Plan", billing_label: "Abrechnung",
+      total_label: "Gesamtbetrag", card_details: "Kartendetails", card_holder: "Karteninhaber",
+      pay_btn: "Mit Stripe bezahlen", secure_badge: "SSL-verschlüsselt",
+      success_title: "Zahlung erfolgreich!", success_desc: "Danke für Ihr Abonnement.", btn_dashboard: "Zum Dashboard"
+    },
+    about: {
+      title: "Über VaudTax Helper", subtitle: "Steuern im Kanton Waadt vereinfachen.",
+      mission_title: "Unsere Mission", mission_desc: "Wir nutzen modernste KI, um die Steuererklärung für alle zugänglich zu machen.",
+      privacy_title: "Datenschutz", privacy_desc: "Ihre Daten sind sicher und werden lokal verarbeitet.",
+      contact_title: "Kontakt", contact_desc: "Fragen? Schreiben Sie an support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Freiheit und Vaterland",
       title_start: "Ihre Waadtländer Steuern",
@@ -99,7 +171,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "Der intelligente Assistent zur Erstellung Ihrer offiziellen VaudTax-Erklärung in wenigen Minuten.",
       cta_create: "Erklärung erstellen",
       secure: "Sicher", fast: "Schnell", compatible: "VaudTax kompatibel",
-      footer: "© 2024 VaudTax Helfer"
+      footer: "© 2025 VaudTax Helfer"
     },
     auth: {
       login_title: "Willkommen", register_title: "Konto erstellen",
@@ -111,7 +183,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Ihre Erklärungen", new_btn: "Neue Erklärung",
-      empty_title: "Leerer Verlauf", empty_desc: "Starten Sie Ihre erste Erklärung für 2024",
+      empty_title: "Leerer Verlauf", empty_desc: "Starten Sie Ihre erste Erklärung",
       start_now: "Jetzt starten", status_finished: "Abgeschlossen", modified: "Geändert am"
     },
     upload: {
@@ -137,7 +209,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   en: {
     brand: { motto: "Freedom and Fatherland", desc: "VaudTax Helper" },
-    nav: { logout: "Logout", login: "Login", start: "Start" },
+    nav: { home: "Home", pricing: "Pricing", about: "About", logout: "Logout", login: "Login", start: "Start" },
+    pricing: {
+      title: "Our Pricing", subtitle: "Choose your subscription plan. Monthly or Annual.",
+      toggle_monthly: "Monthly", toggle_annual: "Annual (-20%)",
+      free_title: "Discovery", free_price: "0 CHF", free_desc: "To test the extraction.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Full declaration.",
+      pro_title: "Expert", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "With expert review.",
+      feature_extract: "Automatic AI Extraction", feature_export: "Official .vaudtax export",
+      feature_support: "Priority Support", feature_review: "Tax Review", btn_choose: "Choose plan",
+      per_month: "/ month", per_year: "/ year"
+    },
+    payment: {
+      title: "Secure Payment", summary_title: "Order Summary", plan_label: "Plan", billing_label: "Billing",
+      total_label: "Total to pay", card_details: "Card Details", card_holder: "Card Holder",
+      pay_btn: "Pay with Stripe", secure_badge: "SSL Encrypted",
+      success_title: "Payment Successful!", success_desc: "Thank you for subscribing.", btn_dashboard: "Go to Dashboard"
+    },
+    about: {
+      title: "About VaudTax Helper", subtitle: "Simplifying taxation for the Canton of Vaud.",
+      mission_title: "Our Mission", mission_desc: "We use cutting-edge AI to make tax declaration accessible, fast, and error-free for everyone.",
+      privacy_title: "Privacy", privacy_desc: "Your data is processed locally and secured.",
+      contact_title: "Contact", contact_desc: "Questions? Email us at support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Freedom and Fatherland",
       title_start: "Your Vaud taxes",
@@ -145,7 +239,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "The intelligent assistant to generate your official VaudTax declaration in minutes.",
       cta_create: "Create declaration",
       secure: "Secure", fast: "Fast", compatible: "VaudTax compatible",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Welcome", register_title: "Create account",
@@ -157,7 +251,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Your Declarations", new_btn: "New declaration",
-      empty_title: "Empty history", empty_desc: "Start your first declaration for 2024",
+      empty_title: "Empty history", empty_desc: "Start your first declaration",
       start_now: "Start now", status_finished: "Finished", modified: "Modified on"
     },
     upload: {
@@ -183,15 +277,37 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   it: {
     brand: { motto: "Libertà e Patria", desc: "Assistente VaudTax" },
-    nav: { logout: "Disconnetti", login: "Accedi", start: "Inizia" },
+    nav: { home: "Home", pricing: "Prezzi", about: "Info", logout: "Disconnetti", login: "Accedi", start: "Inizia" },
+    pricing: {
+      title: "I nostri prezzi", subtitle: "Scegli il tuo abbonamento.",
+      toggle_monthly: "Mensile", toggle_annual: "Annuale (-20%)",
+      free_title: "Scoperta", free_price: "0 CHF", free_desc: "Per testare.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Dichiarazione completa.",
+      pro_title: "Esperto", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Con revisione.",
+      feature_extract: "Estrazione IA", feature_export: "Export .vaudtax ufficiale",
+      feature_support: "Supporto prioritario", feature_review: "Revisione fiscale", btn_choose: "Scegliere",
+      per_month: "/ mese", per_year: "/ anno"
+    },
+    payment: {
+      title: "Pagamento Sicuro", summary_title: "Riepilogo", plan_label: "Piano", billing_label: "Fatturazione",
+      total_label: "Totale", card_details: "Dettagli carta", card_holder: "Titolare",
+      pay_btn: "Paga con Stripe", secure_badge: "Crittografia SSL",
+      success_title: "Pagamento Riuscito!", success_desc: "Grazie per l'abbonamento.", btn_dashboard: "Vai al Dashboard"
+    },
+    about: {
+      title: "Chi siamo", subtitle: "Semplifichiamo la fiscalità nel Canton Vaud.",
+      mission_title: "La nostra missione", mission_desc: "Usiamo l'IA per rendere la dichiarazione accessibile e veloce.",
+      privacy_title: "Privacy", privacy_desc: "I tuoi dati sono sicuri.",
+      contact_title: "Contatto", contact_desc: "Domande? support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Libertà e Patria",
-      title_start: "Le tue tasse vaudesi",
+      title_start: "Le tue tasse",
       title_end: "semplificate",
       subtitle: "L'assistente intelligente per generare la tua dichiarazione VaudTax in pochi minuti.",
       cta_create: "Crea dichiarazione",
       secure: "Sicuro", fast: "Veloce", compatible: "Compatibile VaudTax",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Benvenuto", register_title: "Crea account",
@@ -203,7 +319,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Le tue dichiarazioni", new_btn: "Nuova dichiarazione",
-      empty_title: "Cronologia vuota", empty_desc: "Inizia la tua prima dichiarazione per il 2024",
+      empty_title: "Cronologia vuota", empty_desc: "Inizia la tua prima dichiarazione",
       start_now: "Inizia ora", status_finished: "Completata", modified: "Modificato il"
     },
     upload: {
@@ -229,7 +345,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   pt: {
     brand: { motto: "Liberdade e Pátria", desc: "Assistente VaudTax" },
-    nav: { logout: "Sair", login: "Entrar", start: "Começar" },
+    nav: { home: "Início", pricing: "Preços", about: "Sobre", logout: "Sair", login: "Entrar", start: "Começar" },
+    pricing: {
+      title: "Nossos Preços", subtitle: "Planos transparentes.",
+      toggle_monthly: "Mensal", toggle_annual: "Anual (-20%)",
+      free_title: "Descoberta", free_price: "0 CHF", free_desc: "Para testar.",
+      standard_title: "Padrão", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Declaração completa.",
+      pro_title: "Expert", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Com revisão.",
+      feature_extract: "Extração IA", feature_export: "Exportação .vaudtax",
+      feature_support: "Suporte", feature_review: "Revisão", btn_choose: "Escolher",
+      per_month: "/ mês", per_year: "/ ano"
+    },
+    payment: {
+      title: "Pagamento Seguro", summary_title: "Resumo", plan_label: "Plano", billing_label: "Cobrança",
+      total_label: "Total", card_details: "Detalhes do cartão", card_holder: "Titular",
+      pay_btn: "Pagar com Stripe", secure_badge: "SSL Seguro",
+      success_title: "Sucesso!", success_desc: "Obrigado.", btn_dashboard: "Ir para Dashboard"
+    },
+    about: {
+      title: "Sobre Nós", subtitle: "Simplificando impostos em Vaud.",
+      mission_title: "Missão", mission_desc: "IA para impostos acessíveis.",
+      privacy_title: "Privacidade", privacy_desc: "Dados seguros.",
+      contact_title: "Contato", contact_desc: "support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Liberdade e Pátria",
       title_start: "Seus impostos",
@@ -237,7 +375,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "O assistente inteligente para gerar sua declaração VaudTax em minutos.",
       cta_create: "Criar declaração",
       secure: "Seguro", fast: "Rápido", compatible: "Compatível VaudTax",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Bem-vindo", register_title: "Criar conta",
@@ -249,7 +387,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Suas Declarações", new_btn: "Nova declaração",
-      empty_title: "Histórico vazio", empty_desc: "Comece sua primeira declaração para 2024",
+      empty_title: "Histórico vazio", empty_desc: "Comece sua primeira declaração",
       start_now: "Começar agora", status_finished: "Concluída", modified: "Modificado em"
     },
     upload: {
@@ -275,7 +413,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   sq: {
     brand: { motto: "Liri dhe Atdhe", desc: "Asistenti VaudTax" },
-    nav: { logout: "Dil", login: "Hyr", start: "Fillo" },
+    nav: { home: "Ballina", pricing: "Çmimet", about: "Rreth nesh", logout: "Dil", login: "Hyr", start: "Fillo" },
+    pricing: {
+      title: "Çmimet tona", subtitle: "Zgjidhni planin tuaj.",
+      toggle_monthly: "Mujore", toggle_annual: "Vjetore (-20%)",
+      free_title: "Zbulim", free_price: "0 CHF", free_desc: "Për testim.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Deklaratë e plotë.",
+      pro_title: "Ekspert", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Me rishikim.",
+      feature_extract: "Nxjerrja IA", feature_export: "Eksport .vaudtax",
+      feature_support: "Mbështetje", feature_review: "Rishikim", btn_choose: "Zgjidhni",
+      per_month: "/ muaj", per_year: "/ vit"
+    },
+    payment: {
+      title: "Pagesë e Sigurt", summary_title: "Përmbledhje", plan_label: "Plani", billing_label: "Faturimi",
+      total_label: "Totali", card_details: "Detajet e kartës", card_holder: "Mbajtësi",
+      pay_btn: "Paguaj me Stripe", secure_badge: "SSL i sigurt",
+      success_title: "Pagesa u krye!", success_desc: "Faleminderit.", btn_dashboard: "Shko te Paneli"
+    },
+    about: {
+      title: "Rreth nesh", subtitle: "Thjeshtimi i taksave.",
+      mission_title: "Misioni", mission_desc: "IA për taksa të lehta.",
+      privacy_title: "Privatësia", privacy_desc: "Të dhëna të sigurta.",
+      contact_title: "Kontakt", contact_desc: "support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Liri dhe Atdhe",
       title_start: "Taksat tuaja",
@@ -283,7 +443,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "Asistenti inteligjent për të gjeneruar deklaratën tuaj zyrtare VaudTax në pak minuta.",
       cta_create: "Krijo deklaratë",
       secure: "I sigurt", fast: "I shpejtë", compatible: "E përputhshme me VaudTax",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Mirësevini", register_title: "Krijo llogari",
@@ -295,7 +455,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Deklaratat tuaja", new_btn: "Deklaratë e re",
-      empty_title: "Historiku bosh", empty_desc: "Filloni deklaratën tuaj të parë për 2024",
+      empty_title: "Historiku bosh", empty_desc: "Filloni deklaratën tuaj të parë",
       start_now: "Fillo tani", status_finished: "Përfunduar", modified: "Modifikuar më"
     },
     upload: {
@@ -321,7 +481,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   hr: {
     brand: { motto: "Sloboda i Domovina", desc: "VaudTax Pomoćnik" },
-    nav: { logout: "Odjava", login: "Prijava", start: "Počni" },
+    nav: { home: "Početna", pricing: "Cijene", about: "O nama", logout: "Odjava", login: "Prijava", start: "Počni" },
+    pricing: {
+      title: "Cjenik", subtitle: "Odaberite plan.",
+      toggle_monthly: "Mjesečno", toggle_annual: "Godišnje (-20%)",
+      free_title: "Otkriće", free_price: "0 CHF", free_desc: "Za test.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Puna prijava.",
+      pro_title: "Ekspert", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Stručna revizija.",
+      feature_extract: "AI Ekstrakcija", feature_export: "Izvoz .vaudtax",
+      feature_support: "Podrška", feature_review: "Revizija", btn_choose: "Odaberi",
+      per_month: "/ mj", per_year: "/ god"
+    },
+    payment: {
+      title: "Sigurno plaćanje", summary_title: "Sažetak", plan_label: "Plan", billing_label: "Naplata",
+      total_label: "Ukupno", card_details: "Detalji kartice", card_holder: "Vlasnik",
+      pay_btn: "Plati (Stripe)", secure_badge: "SSL Sigurno",
+      success_title: "Uspjeh!", success_desc: "Hvala na pretplati.", btn_dashboard: "Na nadzornu ploču"
+    },
+    about: {
+      title: "O nama", subtitle: "Pojednostavljujemo poreze.",
+      mission_title: "Misija", mission_desc: "AI za poreze.",
+      privacy_title: "Privatnost", privacy_desc: "Sigurni podaci.",
+      contact_title: "Kontakt", contact_desc: "support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Sloboda i Domovina",
       title_start: "Vaši porezi",
@@ -329,7 +511,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "Pametni asistent za generiranje vaše službene VaudTax prijave u nekoliko minuta.",
       cta_create: "Nova prijava",
       secure: "Sigurno", fast: "Brzo", compatible: "VaudTax kompatibilno",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Dobrodošli", register_title: "Napravi račun",
@@ -341,7 +523,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Vaše Prijave", new_btn: "Nova prijava",
-      empty_title: "Prazna povijest", empty_desc: "Započnite svoju prvu prijavu za 2024.",
+      empty_title: "Prazna povijest", empty_desc: "Započnite svoju prvu prijavu",
       start_now: "Započni sada", status_finished: "Završeno", modified: "Izmijenjeno"
     },
     upload: {
@@ -367,7 +549,29 @@ export const TRANSLATIONS: Record<Language, any> = {
   },
   rm: {
     brand: { motto: "Libertad e Patria", desc: "Assistent VaudTax" },
-    nav: { logout: "Sortir", login: "S'annunziar", start: "Cumenzar" },
+    nav: { home: "Chasa", pricing: "Pretschs", about: "Davart", logout: "Sortir", login: "S'annunziar", start: "Cumenzar" },
+    pricing: {
+      title: "Noss Pretschs", subtitle: "Plans transparents.",
+      toggle_monthly: "Mensil", toggle_annual: "Annual (-20%)",
+      free_title: "Descuverta", free_price: "0 CHF", free_desc: "Per testar.",
+      standard_title: "Standard", standard_price_mo: "9.90 CHF", standard_price_yr: "99.00 CHF", standard_desc: "Decleraziun cumpletta.",
+      pro_title: "Expert", pro_price_mo: "29.90 CHF", pro_price_yr: "299.00 CHF", pro_desc: "Cun controlla.",
+      feature_extract: "Extracziun AI", feature_export: "Export .vaudtax",
+      feature_support: "Support", feature_review: "Controlla", btn_choose: "Tscherner",
+      per_month: "/ mais", per_year: "/ onn"
+    },
+    payment: {
+      title: "Pajament Segir", summary_title: "Resumaziun", plan_label: "Plan", billing_label: "Fakturaziun",
+      total_label: "Total", card_details: "Detagls carta", card_holder: "Possessur",
+      pay_btn: "Pajar cun Stripe", secure_badge: "SSL Segir",
+      success_title: "Reussì!", success_desc: "Grazia.", btn_dashboard: "Al Dashboard"
+    },
+    about: {
+      title: "Davart nus", subtitle: "Simplifitgar taglias.",
+      mission_title: "Missiun", mission_desc: "AI per taglias.",
+      privacy_title: "Protecziun", privacy_desc: "Datas segiras.",
+      contact_title: "Contact", contact_desc: "support@vaudtax-helper.ch"
+    },
     landing: {
       hero_badge: "Libertad e Patria",
       title_start: "Vossas taglias",
@@ -375,7 +579,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       subtitle: "L'assistent intelligent per generar vossa decleraziun uffiziala VaudTax en paucas minutas.",
       cta_create: "Crear decleraziun",
       secure: "Segir", fast: "Spert", compatible: "Compatibel cun VaudTax",
-      footer: "© 2024 VaudTax Helper"
+      footer: "© 2025 VaudTax Helper"
     },
     auth: {
       login_title: "Bainvegni", register_title: "Crear conto",
@@ -387,7 +591,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     },
     dashboard: {
       title: "Vossas Decleraziuns", new_btn: "Nova decleraziun",
-      empty_title: "Istorgia vida", empty_desc: "Cumenzai vossa emprima decleraziun per 2024",
+      empty_title: "Istorgia vida", empty_desc: "Cumenzai vossa emprima decleraziun",
       start_now: "Cumenzar ussa", status_finished: "Terminà", modified: "Modifitgà il"
     },
     upload: {

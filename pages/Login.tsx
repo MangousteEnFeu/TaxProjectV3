@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { signIn, signUp } from '../services/supabase';
 import { Landmark, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -14,6 +14,7 @@ const Login: React.FC<LoginProps> = ({ isRegister = false }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,9 +29,17 @@ const Login: React.FC<LoginProps> = ({ isRegister = false }) => {
 
       if (error) throw error;
       
-      // Navigate to dashboard on success
+      // Check if user selected a plan via URL params
+      const searchParams = new URLSearchParams(location.search);
+      const plan = searchParams.get('plan');
+
       if (data.user) {
-        navigate('/dashboard');
+        if (plan && plan !== 'free') {
+           // Redirect to payment if a paid plan is selected
+           navigate(`/payment${location.search}`);
+        } else {
+           navigate('/dashboard');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
@@ -101,7 +110,7 @@ const Login: React.FC<LoginProps> = ({ isRegister = false }) => {
         <div className="mt-6 text-center text-sm text-[#64748B]">
           {isRegister ? t('auth.has_account') : t('auth.no_account')} {' '}
           <Link 
-            to={isRegister ? '/login' : '/register'}
+            to={isRegister ? `/login${location.search}` : `/register${location.search}`}
             className="text-[#00904E] font-bold hover:underline"
           >
             {isRegister ? t('auth.link_login') : t('auth.link_register')}
