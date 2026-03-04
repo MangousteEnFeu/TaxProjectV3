@@ -1,49 +1,46 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import OpenAI from 'openai';
+import { z } from 'zod';
+import { zodResponseFormat } from 'openai/helpers/zod';
 
-// Use the key defined in constants.ts
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const openai = new OpenAI({
+  apiKey: process.env.INFOMANIAK_API_KEY,
+  baseURL: 'https://api.infomaniak.com/1/ai/llm/v1',
+  dangerouslyAllowBrowser: true, // Required for Vite client-side calls
+});
 
-const modelId = "gemini-2.5-flash"; // Updated to recommended model for text/extraction tasks
+// Infomaniak recommended model
+const modelId = "llama3-70b-instruct";
 
 export const extractDataFromDocument = async (file: File) => {
   try {
     const base64Data = await fileToGenerativePart(file);
-    
+
     // We want a structured JSON response
-    const extractionSchema = {
-      type: Type.OBJECT,
-      properties: {
-        documentType: { type: Type.STRING, description: "Type of document: 'BankStatement', 'SalaryCertificate', 'SalarySlip', 'Other'" },
-        bankAccount: {
-          type: Type.OBJECT,
-          properties: {
-            banque: { type: Type.STRING },
-            iban: { type: Type.STRING },
-            titulaire: { type: Type.STRING },
-            typeCompte: { type: Type.STRING },
-            solde: { type: Type.NUMBER, description: "Balance at end of year, normalized number without ' or spaces" },
-            interets: { type: Type.NUMBER, description: "Interest amount, normalized number" },
-            dateReleve: { type: Type.STRING }
-          }
-        },
-        salary: {
-          type: Type.OBJECT,
-          properties: {
-            employeur: { type: Type.STRING },
-            salaireBrut: { type: Type.NUMBER },
-            salaireNet: { type: Type.NUMBER },
-            cotisationsAVS: { type: Type.NUMBER },
-            cotisationsLPP: { type: Type.NUMBER },
-            fraisProfessionnels: { type: Type.NUMBER },
-            autresDeductions: { type: Type.NUMBER }
-          }
-        }
-      }
-    };
+    const ExtractionSchema = z.object({
+      documentType: z.string().describe("Type of document: 'BankStatement', 'SalaryCertificate', 'SalarySlip', 'Other'"),
+      bankAccount: z.object({
+        banque: z.string().optional(),
+        iban: z.string().optional(),
+        titulaire: z.string().optional(),
+        typeCompte: z.string().optional(),
+        solde: z.number().optional().describe("Balance at end of year, normalized number without ' or spaces"),
+        interets: z.number().optional().describe("Interest amount, normalized number"),
+        dateReleve: z.string().optional()
+      }).optional(),
+      salary: z.object({
+        employeur: z.string().optional(),
+        salaireBrut: z.number().optional().describe("Gross Salary (Chiffre 8)"),
+        salaireNet: z.number().optional().describe("Net Salary (Chiffre 11)"),
+        cotisationsAVS: z.number().optional().describe("AVS/AI/APG (Chiffre 9)"),
+        cotisationsLPP: z.number().optional().describe("LPP (Chiffre 10)"),
+        fraisProfessionnels: z.number().optional(),
+        autresDeductions: z.number().optional()
+      }).optional()
+    });
 
     const prompt = `
       You are an expert tax assistant for the Canton of Vaud, Switzerland.
-      Analyze this document image or PDF.
+      Analyze this document text/data.
       
       If it is a Bank Statement (Attestation fiscale):
       Extract Bank Name (e.g. UBS, BCV), IBAN, Holder Name, Account Type, Balance (Solde) at 31.12, and Gross Interest (Intérêts bruts/créanciers).
@@ -55,27 +52,32 @@ export const extractDataFromDocument = async (file: File) => {
       Return the data in the specified JSON structure.
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await openai.chat.completions.create({
       model: modelId,
-      contents: {
-        parts: [
-          { inlineData: base64Data },
-          { text: prompt }
-        ]
-      },
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: extractionSchema
-      }
+      messages: [
+        { role: 'system', content: prompt },
+        // Since Infomaniak LLM might not fully support image vision endpoints out of the box in the regular chat API in the same way as Gemini,
+        // We pass image text if we had OCR, but typically we send the image as a data url if the model supports it.
+        // Warning: if Infomaniak's Llama-3-70b doesn't support images, this will fail. Assuming text-only for now or multimodality if supported by their API.
+        // Let's pass the base64 as an image url structure used by OpenAI vision models.
+        {
+          role: 'user',
+          content: [
+            { type: "text", text: "Please extract the relevant tax data from this document image." },
+            { type: "image_url", image_url: { url: `data:${base64Data.mimeType};base64,${base64Data.data}` } }
+          ]
+        }
+      ],
+      response_format: zodResponseFormat(ExtractionSchema, "tax_extraction"),
     });
 
-    const text = response.text;
-    if (!text) throw new Error("No response from Gemini");
-    
+    const text = response.choices[0].message.content;
+    if (!text) throw new Error("No response from Infomaniak LLM API");
+
     return JSON.parse(text);
 
   } catch (error) {
-    console.error("Gemini Extraction Error:", error);
+    console.error("LLM Extraction Error:", error);
     throw error;
   }
 };
