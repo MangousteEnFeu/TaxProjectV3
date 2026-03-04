@@ -23,62 +23,41 @@ const ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6I
 
 export const supabase = createClient(PROJECT_URL, ANON_KEY);
 
-// Helper pour vérifier si Supabase est configuré
-const isSupabaseConfigured = () => {
-  return PROJECT_URL !== "https://placeholder.supabase.co" && 
-         !PROJECT_URL.includes("VOTRE_URL") &&
-         ANON_KEY !== "placeholder";
-};
 
 export const signIn = async (email: string, pass: string) => {
-  if (!isSupabaseConfigured()) {
-    console.warn("Supabase non configuré. Mode démo actif.");
-    await new Promise(r => setTimeout(r, 1000));
-    return { data: { user: { email, id: 'demo-user-123' } }, error: null };
-  }
   return await supabase.auth.signInWithPassword({ email, password: pass });
 };
 
 export const signUp = async (email: string, pass: string) => {
-  if (!isSupabaseConfigured()) {
-     console.warn("Supabase non configuré. Mode démo actif.");
-     await new Promise(r => setTimeout(r, 1000));
-     return { data: { user: { email, id: 'demo-user-123' } }, error: null };
-  }
   return await supabase.auth.signUp({ email, password: pass });
 };
 
 export const signOut = async () => {
-  if (!isSupabaseConfigured()) return { error: null };
   return await supabase.auth.signOut();
 };
 
 // --- CRUD Declarations ---
 
 export const saveDeclaration = async (userId: string, data: TaxData, name?: string, id?: string) => {
-    if (!isSupabaseConfigured()) return { data: null, error: null };
-    
-    const payload = {
-        user_id: userId,
-        data: data,
-        name: name || `Déclaration ${data.identification.periodeDebut.split('-')[0]}`,
-        year: parseInt(data.identification.periodeDebut.split('-')[0]),
-        updated_at: new Date().toISOString()
-    };
+  const payload = {
+    user_id: userId,
+    data: data,
+    name: name || `Déclaration ${data.identification.periodeDebut.split('-')[0]}`,
+    year: parseInt(data.identification.periodeDebut.split('-')[0]),
+    updated_at: new Date().toISOString()
+  };
 
-    if (id) {
-        return await supabase.from('declarations').update(payload).eq('id', id).select().single();
-    } else {
-        return await supabase.from('declarations').insert(payload).select().single();
-    }
+  if (id) {
+    return await supabase.from('declarations').update(payload).eq('id', id).select().single();
+  } else {
+    return await supabase.from('declarations').insert(payload).select().single();
+  }
 };
 
 export const getDeclarations = async (userId: string) => {
-    if (!isSupabaseConfigured()) return { data: [], error: null };
-    return await supabase.from('declarations').select('*').eq('user_id', userId).order('updated_at', { ascending: false });
+  return await supabase.from('declarations').select('*').eq('user_id', userId).order('updated_at', { ascending: false });
 };
 
 export const getDeclarationById = async (id: string) => {
-    if (!isSupabaseConfigured()) return { data: null, error: null };
-    return await supabase.from('declarations').select('*').eq('id', id).single();
+  return await supabase.from('declarations').select('*').eq('id', id).single();
 };
