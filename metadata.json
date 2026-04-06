@@ -1,5 +1,0 @@
-{
-  "name": "VaudTax Helper",
-  "description": "Application to simplify tax declarations for Canton Vaud using AI extraction and VaudTax file generation.",
-  "requestFramePermissions": []
-}

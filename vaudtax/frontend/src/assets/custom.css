@@ -1,0 +1,139 @@
+/* ===========================
+   VaudTax – Brand overrides for Bootstrap 5
+   =========================== */
+
+:root {
+  /* Override Bootstrap success with brand green */
+  --bs-success:           #00904E;
+  --bs-success-rgb:       0, 144, 78;
+
+  /* Extra brand tokens */
+  --brand-green-dark:     #00703C;
+  --brand-green-darker:   #006030;
+  --brand-gold:           #D4AF37;
+  --brand-gold-dark:      #B08D26;
+  --brand-slate:          #1E293B;
+  --brand-slate-mid:      #64748B;
+  --brand-slate-light:    #94A3B8;
+  --brand-bg:             #F8FAFC;
+  --brand-border:         #E2E8F0;
+}
+
+/* ---- Global ---- */
+body {
+  background-color: var(--brand-bg);
+  color: var(--brand-slate);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ---- Buttons ---- */
+.btn-brand {
+  background-color: var(--bs-success);
+  border-color: var(--brand-green-darker);
+  border-bottom-width: 3px;
+  color: #fff;
+  font-weight: 700;
+}
+.btn-brand:hover, .btn-brand:focus {
+  background-color: var(--brand-green-dark);
+  border-color: var(--brand-green-darker);
+  color: #fff;
+}
+.btn-brand:disabled {
+  background-color: var(--bs-success);
+  opacity: .5;
+}
+
+.btn-outline-brand {
+  border: 2px solid var(--brand-border);
+  color: var(--brand-slate-mid);
+  font-weight: 700;
+  background: transparent;
+}
+.btn-outline-brand:hover {
+  border-color: var(--bs-success);
+  color: var(--bs-success);
+}
+
+/* ---- Form controls ---- */
+.form-control, .form-select {
+  background-color: var(--brand-bg);
+  border-color: var(--brand-border);
+  color: var(--brand-slate);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--bs-success);
+  box-shadow: 0 0 0 .2rem rgba(0,144,78,.2);
+  background-color: #fff;
+}
+.form-label {
+  font-weight: 500;
+  color: var(--brand-slate);
+  font-size: .875rem;
+}
+
+/* ---- Cards ---- */
+.card-brand {
+  border: 1px solid var(--brand-border);
+  border-radius: 1rem;
+}
+
+/* ---- Navbar ---- */
+.navbar-brand-logo {
+  background-color: var(--bs-success);
+  padding: .5rem;
+  border-radius: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .2s;
+}
+.navbar-brand-logo:hover { background-color: var(--brand-green-dark); }
+
+/* ---- Text colors ---- */
+.text-brand   { color: var(--bs-success) !important; }
+.text-gold    { color: var(--brand-gold) !important; }
+.text-gold-dark { color: var(--brand-gold-dark) !important; }
+.text-slate   { color: var(--brand-slate) !important; }
+.text-muted-brand { color: var(--brand-slate-mid) !important; }
+.text-light-brand { color: var(--brand-slate-light) !important; }
+
+/* ---- Backgrounds ---- */
+.bg-brand   { background-color: var(--bs-success) !important; }
+.bg-brand-soft { background-color: rgba(0,144,78,.08) !important; }
+.bg-gold-soft  { background-color: rgba(212,175,55,.15) !important; }
+.bg-page    { background-color: var(--brand-bg) !important; }
+
+/* ---- Borders ---- */
+.border-brand  { border-color: var(--bs-success) !important; }
+.border-subtle { border-color: var(--brand-border) !important; }
+
+/* ---- Upload drop zone ---- */
+.drop-zone {
+  border: 2px dashed var(--brand-border);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background-color .2s;
+}
+.drop-zone:hover, .drop-zone.dragging {
+  border-color: var(--bs-success);
+  background-color: rgba(0,144,78,.04);
+}
+
+/* ---- Pricing card highlighted ---- */
+.pricing-card-featured {
+  border: 2px solid var(--bs-success) !important;
+  transform: translateY(-1rem);
+}
+@media (max-width: 767px) {
+  .pricing-card-featured { transform: none; }
+}
+
+/* ---- Spinner color ---- */
+.spinner-brand { color: var(--bs-success); }
+
+/* ---- Nav link active ---- */
+.nav-link.active-brand { color: var(--bs-success) !important; font-weight: 700; }
+.nav-link:hover { color: var(--bs-success) !important; }
